@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cureosity Clinic – Queue Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f9ff;
+            --white: #ffffff;
+            --muted: #64748b;
+            --cyan: #0ea5e9;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --orange: #f97316;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --glass: rgba(14, 165, 233, 0.08);
+            --shadow: 0 12px 36px rgba(8, 40, 56, 0.08);
+            --radius: 16px;
+            --header-h: 72px;
+            --footer-h: 64px;
+            --maxw: 1200px;
+            --frame-shadow: 0 20px 48px rgba(14, 165, 233, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Poppins', system-ui, Segoe UI, Roboto, -apple-system, Arial;
+            color: #0f172a;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .landing-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            box-shadow: 0 12px 36px rgba(14, 165, 233, 0.25);
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .landing-logo svg {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 4px 12px rgba(14, 165, 233, 0.3));
+        }
+
+        .landing-title {
+            font-weight: 800;
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 16px 0;
+            line-height: 1.1;
+        }
+
+        .landing-subtitle {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 0 40px 0;
+            line-height: 1.6;
+        }
+
+        .landing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 0 50px 0;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(14, 165, 233, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(14, 165, 233, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0 0 12px 0;
+            color: #0f172a;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .play-now-btn {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .play-now-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 32px rgba(14, 165, 233, 0.4);
+        }
+
+        /* Header */
+        header.topbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+            display: none;
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+            filter: drop-shadow(0 2px 8px rgba(14, 165, 233, 0.2));
+        }
+
+        .title {
+            font-weight: 700;
+            font-size: 20px;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            color: #0f172a;
+        }
+
+        .btn.ghost:hover {
+            background: rgba(14, 165, 233, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: white;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2);
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn:focus {
+            outline: 2px solid rgba(14, 165, 233, 0.2);
+        }
+
+        /* Stats badges */
+        .stats-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--glass);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .stats-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-badge.green {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #059669;
+        }
+
+        .stats-badge.yellow {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.2);
+            color: #d97706;
+        }
+
+        .stats-badge.purple {
+            background: rgba(139, 92, 246, 0.08);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: #7c3aed;
+        }
+
+        /* container */
+        .container {
+            max-width: var(--maxw);
+            margin: 28px auto;
+            padding: 0 20px;
+            transition: opacity 0.28s ease, transform 0.28s ease;
+            display: none;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            border: 1px solid rgba(14, 165, 233, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 16px 40px rgba(14, 165, 233, 0.12);
+        }
+
+        /* Premium Notification System */
+        .premium-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            color: white;
+            padding: 20px 24px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.4);
+            z-index: 2000;
+            animation: slideInBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .premium-notification.success {
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+        }
+
+        .premium-notification.levelup {
+            background: linear-gradient(135deg, var(--yellow), var(--orange), var(--pink));
+            animation: slideInBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), pulse 2s infinite;
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                transform: translateX(400px) rotate(10deg);
+                opacity: 0;
+            }
+            60% {
+                transform: translateX(-10px) rotate(-5deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0) rotate(0);
+            }
+        }
+
+        .notification-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .notification-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            opacity: 0.95;
+        }
+
+        .notification-message {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        /* Mini notifications */
+        .mini-notification {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: slideUp 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Goal System - Premium Design */
+        .goal-card {
+            background: linear-gradient(135deg, #ffffff, #f8fcff);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 2px solid rgba(14, 165, 233, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .goal-card:hover::before {
+            left: 100%;
+        }
+
+        .goal-card.completed {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+
+        .goal-card.claimed {
+            opacity: 0.6;
+            border-color: rgba(100, 116, 139, 0.2);
+        }
+
+        .goal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .goal-icon {
+            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        .goal-info {
+            flex: 1;
+        }
+
+        .goal-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .goal-desc {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .goal-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .ready-badge {
+            background: var(--green);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-badge {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--cyan);
+        }
+
+        .claimed-badge {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--muted);
+        }
+
+        .goal-progress-wrapper {
+            margin: 12px 0;
+        }
+
+        .goal-progress-bar {
+            height: 8px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .goal-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .goal-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .goal-progress-text {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .goal-reward {
+            padding: 8px 12px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            font-size: 12px;
+            margin-top: 12px;
+        }
+
+        .reward-label {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .reward-value {
+            color: var(--purple);
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        .xp-badge {
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            margin-left: 6px;
+        }
+
+        /* Level Display */
+        .level-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.08));
+            padding: 16px;
+            border-radius: 14px;
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .level-badge {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+            border: 3px solid white;
+        }
+
+        .level-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .level-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2px;
+        }
+
+        .level-info {
+            flex: 1;
+        }
+
+        .level-xp-text {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .current-xp {
+            color: var(--purple);
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .level-progress-bar {
+            height: 10px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple), var(--pink));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Power-Up Shop */
+        .powerup-shop {
+            margin-top: 16px;
+        }
+
+        .powerup-card {
+            background: linear-gradient(135deg, #ffffff, #f8fcff);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(139, 92, 246, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .powerup-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.15);
+        }
+
+        .powerup-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .powerup-icon {
+            font-size: 28px;
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        .powerup-info {
+            flex: 1;
+        }
+
+        .powerup-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .powerup-desc {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .powerup-price {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .powerup-action {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .powerup-btn {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .powerup-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .powerup-btn:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .powerup-cooldown {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* Priority indicator */
+        .priority-high {
+            border-left: 4px solid #ef4444 !important;
+        }
+
+        .priority-medium {
+            border-left: 4px solid var(--orange) !important;
+        }
+
+        .priority-normal {
+            border-left: 4px solid var(--green) !important;
+        }
+
+        /* form */
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            background: rgba(14, 165, 233, 0.03);
+            font-size: 14px;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        textarea {
+            min-height: 84px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* doctor cards admin */
+        .doctors-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .doctor-card {
+            padding: 16px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.03), rgba(59, 130, 246, 0.03));
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 48px rgba(14, 165, 233, 0.1);
+        }
+
+        .doc-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .doc-name {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 16px;
+        }
+
+        .doc-spec {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .now-attending {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 10px;
+            color: #0f172a;
+        }
+
+        .waiting {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .doc-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .efficiency-score {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--green);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            z-index: 1;
+        }
+
+        /* display view container */
+        .display-wrap {
+            min-height: calc(100vh - var(--header-h) - var(--footer-h) - 48px);
+            padding: 28px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .display-frame {
+            width: 100%;
+            border-radius: 20px;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(224, 242, 254, 0.9), rgba(186, 230, 253, 0.9));
+            box-shadow: var(--frame-shadow);
+            border: 1px solid rgba(14, 165, 233, 0.1);
+        }
+
+        .display-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .display-card {
+            background: linear-gradient(135deg, #ffffff, #f8fcff);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            box-shadow: 0 12px 30px rgba(8, 40, 56, 0.06);
+            text-align: center;
+            min-height: 160px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .display-card.updated {
+            box-shadow: 0 30px 60px rgba(14, 165, 233, 0.15);
+            transform: translateY(-8px);
+            background: linear-gradient(135deg, #ffffff, #f0f9ff);
+        }
+
+        .display-doc {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .display-now {
+            margin-top: 14px;
+            font-weight: 800;
+            font-size: 24px;
+            color: #0f172a;
+        }
+
+        .display-sub {
+            margin-top: 8px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* floating animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .display-grid .display-card:nth-child(1) {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+
+        .display-grid .display-card:nth-child(2) {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 0.8s;
+        }
+
+        .display-grid .display-card:nth-child(3) {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 1.6s;
+        }
+
+        .display-grid .display-card:nth-child(4) {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 2.4s;
+        }
+
+        /* call/done button styles */
+        .btn-call {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: white;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-done {
+            background: transparent;
+            color: var(--cyan);
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-call:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-done:hover {
+            transform: translateY(-3px);
+            background: rgba(14, 165, 233, 0.05);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.1);
+        }
+
+        /* DSA Visualizer */
+        .dsa-viz {
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 14px;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .dsa-title {
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .queue-visual {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 12px 0;
+        }
+
+        .queue-node {
+            min-width: 110px;
+            padding: 14px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid var(--purple);
+            text-align: center;
+            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .queue-node:hover {
+            transform: translateY(-4px);
+        }
+
+        .queue-node strong {
+            display: block;
+            color: var(--purple);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Tutorial Dialog */
+        .tutorial-dialog {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            z-index: 3000;
+            position: relative;
+        }
+
+        .tutorial-dialog h3 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tutorial-dialog p {
+            margin: 0 0 20px 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .tutorial-dialog .tutorial-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .tutorial-dialog .tutorial-progress {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .tutorial-dialog .tutorial-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(4px);
+        }
+
+        /* transitions for switching views */
+        .view {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.36s ease, transform 0.36s ease;
+        }
+
+        .view.hidden {
+            display: none;
+        }
+
+        /* footer */
+        footer.site-footer {
+            max-width: var(--maxw);
+            margin: 28px auto 36px;
+            padding: 18px 20px;
+            color: var(--muted);
+            text-align: center;
+            border-top: 1px solid rgba(14, 165, 233, 0.1);
+            font-size: 13px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* responsive */
+        @media (max-width: 1000px) {
+            .split {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            body {
+                padding-top: 88px;
+            }
+
+            .display-wrap {
+                min-height: calc(100vh - var(--header-h) - var(--footer-h) - 24px);
+                padding: 18px;
+            }
+
+            .display-frame {
+                padding: 18px;
+            }
+
+            .landing-title {
+                font-size: 36px;
+            }
+
+            .landing-features {
+                grid-template-columns: 1fr;
+            }
+
+            .premium-notification {
+                right: 10px;
+                max-width: 300px;
+            }
+        }
+
+        /* helpers */
+        .muted {
+            color: var(--muted);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Landing Page -->
+<section class="landing-page" id="landingPage">
+    <div class="landing-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6V4z" fill="white" />
+        </svg>
+    </div>
+    <h1 class="landing-title">Cureosity Clinic</h1>
+    <p class="landing-subtitle">An interactive queue management system that demonstrates data structures and algorithms in action. Manage patient flow efficiently with priority queues and load balancing.</p>
+
+    <div class="landing-features">
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title">Smart Patient Assignment</h3>
+            <p class="feature-desc">Automatically assign patients to doctors using load balancing algorithms for optimal efficiency.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚨</div>
+            <h3 class="feature-title">Priority Queue System</h3>
+            <p class="feature-desc">Emergency cases are automatically prioritized using min-heap data structures.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Real-time Analytics</h3>
+            <p class="feature-desc">Monitor wait times, efficiency scores, and queue status with live updates.</p>
+        </div>
+    </div>
+
+    <button class="play-now-btn" id="playNowBtn">Play Now</button>
+</section>
+
+<!-- Main Application -->
+<header class="topbar" role="banner">
+    <div class="brand" role="heading" aria-level="1">
+        <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6V4z" fill="white" />
+            </svg>
+        </div>
+        <div>
+            <div class="title">Cureosity Clinic</div>
+            <div class="subtitle">Queue Management System</div>
+        </div>
+    </div>
+
+    <div class="header-actions" role="toolbar" aria-label="Header actions">
+        <span class="stats-badge green" id="totalPatients">👥 0 patients</span>
+        <span class="stats-badge yellow" id="avgWaitTime">⏱️ 0 min avg</span>
+        <span class="stats-badge purple" id="efficiencyScore">🎯 100% efficient</span>
+        <button id="btnShop" class="btn ghost">🛍️ Power-Up Shop</button>
+        <button id="btnReset" class="btn ghost">Reset Queues</button>
+        <button id="btnTutorial" class="btn ghost">📚 Tutorial</button>
+    </div>
+</header>
+
+<main class="container" id="container">
+    <!-- Admin View -->
+    <section id="adminView" class="view">
+        <div class="split">
+            <!-- LEFT: Add patient form -->
+            <div>
+                <div class="card">
+                    <h3 style="margin:0 0 8px 0" class="text-gradient">Add Patient</h3>
+                    <p class="muted" style="margin:0 0 16px 0">Register patient details and assign to a doctor.</p>
+
+                    <form id="patientForm" autocomplete="off">
+                        <div class="form-row" style="flex-direction:column">
+                            <label for="name">Full name</label>
+                            <input id="name" name="name" type="text" placeholder="Juan Dela Cruz" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div style="flex:1">
+                                <label for="age">Age</label>
+                                <input id="age" name="age" type="number" min="0" placeholder="e.g., 28">
+                            </div>
+                            <div style="width:140px">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender">
+                                    <option value="">Prefer not to say</option>
+                                    <option>Female</option>
+                                    <option>Male</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="flex-direction:column">
+                            <label for="priority">Priority Level</label>
+                            <select id="priority" name="priority">
+                                <option value="normal">Normal</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High (Emergency)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row" style="flex-direction:column">
+                            <label for="concern">Concern / Chief complaint</label>
+                            <textarea id="concern" name="concern" placeholder="Brief description (e.g. cough, check-up)"></textarea>
+                        </div>
+
+                        <div class="form-row" style="flex-direction:column">
+                            <label for="doctor">Assign to Doctor</label>
+                            <select id="doctor" name="doctor" required>
+                                <!-- JS fills -->
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn primary">Add Patient</button>
+                            <button type="button" id="btnAddAuto" class="btn ghost" title="Auto-assign to shortest queue">🤖 Auto-Assign</button>
+                        </div>
+                    </form>
+
+                    <div style="margin-top:16px;font-size:13px;color:var(--muted);padding:12px;background:rgba(14, 165, 233, 0.05);border-radius:10px;border:1px solid rgba(14, 165, 233, 0.1)">
+                        💡 <strong>How it works:</strong> Emergency patients jump to the front of queues. The system automatically balances load between doctors.
+                    </div>
+                </div>
+
+                <!-- DSA Visualizer -->
+                <div class="card" style="margin-top:16px">
+                    <div class="dsa-title">
+                        <span>🧠 Queue Visualization</span>
+                    </div>
+                    <div id="dsaViz" class="dsa-viz">
+                        <div class="queue-visual" id="queueVisual">
+                            <div class="queue-node" style="opacity:0.4">Queue visualization will appear here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level & Goals Panel -->
+                <div class="card" style="margin-top:16px">
+                    <h4 style="margin:0 0 16px 0" class="text-gradient">🎮 Progress & Goals</h4>
+
+                    <!-- Level Display -->
+                    <div id="levelDisplay"></div>
+
+                    <!-- Goals List -->
+                    <div id="goalsList"></div>
+
+                    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+                        <button id="btnClaimRewards" class="btn primary" style="flex:1">🎁 Claim Rewards</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Doctor queue list -->
+            <div>
+                <div class="card">
+                    <h3 style="margin:0 0 8px 0" class="text-gradient">Doctors & Queues</h3>
+                    <p class="muted" style="margin:0 0 16px 0">Quick overview of each doctor's current patient and queue.</p>
+
+                    <div id="doctorsList" class="doctors-list" aria-live="polite">
+                        <!-- Doctors will be loaded here -->
+                    </div>
+
+                    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+                        <button id="btnCallAll" class="btn ghost">📢 Call All Next</button>
+                        <button id="btnClearNow" class="btn ghost">🧹 Clear All Now Attending</button>
+                        <button id="btnOptimize" class="btn ghost">⚡ Balance Queues</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer" id="siteFooter" role="contentinfo">
+        <div>© 2025 Cureosity Clinic | Queue Management System</div>
+        <div style="font-size:11px;margin-top:4px">Empowering patient care through smart queue solutions.</div>
+    </footer>
+</main>
+
+<!-- Power-Up Shop Modal -->
+<div id="shopModal" class="dialog-overlay" style="display:none">
+    <div class="tutorial-dialog" style="max-width:600px">
+        <h3>🛍️ Power-Up Shop</h3>
+        <p>Use your XP to purchase power-ups that enhance your clinic management abilities!</p>
+        
+        <div class="powerup-shop">
+            <div class="powerup-card">
+                <div class="powerup-header">
+                    <div class="powerup-icon">⚡</div>
+                    <div class="powerup-info">
+                        <div class="powerup-title">Efficiency Boost</div>
+                        <div class="powerup-desc">Increase all doctors' efficiency by 10% for 5 minutes</div>
+                    </div>
+                    <div class="powerup-price">50 XP</div>
+                </div>
+                <div class="powerup-action">
+                    <button class="powerup-btn" data-powerup="efficiencyBoost">Purchase</button>
+                    <div class="powerup-cooldown" id="efficiencyBoostCooldown"></div>
+                </div>
+            </div>
+            
+            <div class="powerup-card">
+                <div class="powerup-header">
+                    <div class="powerup-icon">🚀</div>
+                    <div class="powerup-info">
+                        <div class="powerup-title">Fast Processing</div>
+                        <div class="powerup-desc">Process patients 50% faster for 3 minutes</div>
+                    </div>
+                    <div class="powerup-price">75 XP</div>
+                </div>
+                <div class="powerup-action">
+                    <button class="powerup-btn" data-powerup="fastProcessing">Purchase</button>
+                    <div class="powerup-cooldown" id="fastProcessingCooldown"></div>
+                </div>
+            </div>
+            
+            <div class="powerup-card">
+                <div class="powerup-header">
+                    <div class="powerup-icon">🔄</div>
+                    <div class="powerup-info">
+                        <div class="powerup-title">Auto-Balance</div>
+                        <div class="powerup-desc">Automatically balance queues every 30 seconds for 2 minutes</div>
+                    </div>
+                    <div class="powerup-price">100 XP</div>
+                </div>
+                <div class="powerup-action">
+                    <button class="powerup-btn" data-powerup="autoBalance">Purchase</button>
+                    <div class="powerup-cooldown" id="autoBalanceCooldown"></div>
+                </div>
+            </div>
+            
+            <div class="powerup-card">
+                <div class="powerup-header">
+                    <div class="powerup-icon">🎯</div>
+                    <div class="powerup-info">
+                        <div class="powerup-title">Priority Focus</div>
+                        <div class="powerup-desc">Emergency patients are processed 2x faster for 5 minutes</div>
+                    </div>
+                    <div class="powerup-price">120 XP</div>
+                </div>
+                <div class="powerup-action">
+                    <button class="powerup-btn" data-powerup="priorityFocus">Purchase</button>
+                    <div class="powerup-cooldown" id="priorityFocusCooldown"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tutorial-actions" style="margin-top:20px">
+            <div class="tutorial-progress">Your XP: <span id="currentXP">0</span></div>
+            <div class="tutorial-buttons">
+                <button id="closeShopBtn" class="btn primary">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========================================
+    // GLOBAL FUNCTION DECLARATIONS
+    // ========================================
+
+    // Declare functions first so they're available globally
+    function callNextPatient(doctorId) {
+        const doctor = clinic.doctors.find(d => d.id === doctorId);
+        if (!doctor || doctor.queue.isEmpty()) {
+            showMiniNotification('❌ No patients in queue', 'info');
+            return;
+        }
+
+        if (doctor.nowAttending) {
+            completeCurrentPatient(doctorId);
+        }
+
+        const nextPatient = doctor.queue.dequeue();
+        doctor.nowAttending = nextPatient;
+        nextPatient.waitTime = Date.now() - nextPatient.timestamp;
+
+        // Update efficiency based on wait time
+        const idealWaitTime = 15 * 60 * 1000; // 15 minutes
+        const waitRatio = Math.min(1, idealWaitTime / nextPatient.waitTime);
+        doctor.efficiency = Math.min(100, (doctor.efficiency + waitRatio * 10) / 1.1);
+
+        renderDoctorsList();
+        updateDisplayView();
+        updateStats();
+        updateQueueVisualization();
+        saveClinicState();
+
+        showMiniNotification(`📢 ${doctor.name} calling ${nextPatient.name}`, 'success');
+    }
+
+    function completeCurrentPatient(doctorId) {
+        const doctor = clinic.doctors.find(d => d.id === doctorId);
+        if (doctor && doctor.nowAttending) {
+            const completedPatient = doctor.nowAttending;
+            clinic.patients = clinic.patients.filter(p => p.id !== completedPatient.id);
+            doctor.nowAttending = null;
+
+            renderDoctorsList();
+            updateDisplayView();
+            updateStats();
+            saveClinicState();
+
+            showMiniNotification(`✅ ${completedPatient.name} completed`, 'success');
+            return completedPatient;
+        }
+        return null;
+    }
+
+    // ========================================
+    // APPLICATION INITIALIZATION
+    // ========================================
+
+    document.getElementById('landingPage').style.display = 'flex';
+    document.querySelector('header.topbar').style.display = 'none';
+    document.getElementById('container').style.display = 'none';
+    document.querySelector('footer.site-footer').style.display = 'none';
+
+    document.getElementById('playNowBtn').addEventListener('click', function() {
+        document.getElementById('landingPage').style.display = 'none';
+        document.querySelector('header.topbar').style.display = 'flex';
+        document.getElementById('container').style.display = 'block';
+        document.querySelector('footer.site-footer').style.display = 'block';
+        initializeApp();
+    });
+
+    // ========================================
+    // POWER-UP SHOP SYSTEM
+    // ========================================
+
+    const powerUps = {
+        efficiencyBoost: {
+            name: "Efficiency Boost",
+            description: "Increase all doctors' efficiency by 10% for 5 minutes",
+            price: 50,
+            duration: 5 * 60 * 1000, // 5 minutes in milliseconds
+            cooldown: 10 * 60 * 1000, // 10 minutes in milliseconds
+            active: false,
+            lastUsed: 0,
+            effect: function() {
+                clinic.doctors.forEach(doctor => {
+                    doctor.efficiency = Math.min(100, doctor.efficiency * 1.1);
+                });
+                showMiniNotification("⚡ Efficiency Boost activated! All doctors are 10% more efficient.", "success");
+            }
+        },
+        fastProcessing: {
+            name: "Fast Processing",
+            description: "Process patients 50% faster for 3 minutes",
+            price: 75,
+            duration: 3 * 60 * 1000,
+            cooldown: 8 * 60 * 1000,
+            active: false,
+            lastUsed: 0,
+            effect: function() {
+                // This would be implemented in the patient processing logic
+                showMiniNotification("🚀 Fast Processing activated! Patients are being processed 50% faster.", "success");
+            }
+        },
+        autoBalance: {
+            name: "Auto-Balance",
+            description: "Automatically balance queues every 30 seconds for 2 minutes",
+            price: 100,
+            duration: 2 * 60 * 1000,
+            cooldown: 15 * 60 * 1000,
+            active: false,
+            lastUsed: 0,
+            effect: function() {
+                showMiniNotification("🔄 Auto-Balance activated! Queues will be balanced automatically.", "success");
+                const autoBalanceInterval = setInterval(balanceQueues, 30000);
+                setTimeout(() => {
+                    clearInterval(autoBalanceInterval);
+                    showMiniNotification("🔄 Auto-Balance has ended.", "info");
+                }, 2 * 60 * 1000);
+            }
+        },
+        priorityFocus: {
+            name: "Priority Focus",
+            description: "Emergency patients are processed 2x faster for 5 minutes",
+            price: 120,
+            duration: 5 * 60 * 1000,
+            cooldown: 12 * 60 * 1000,
+            active: false,
+            lastUsed: 0,
+            effect: function() {
+                showMiniNotification("🎯 Priority Focus activated! Emergency patients are being processed faster.", "success");
+            }
+        }
+    };
+
+    function purchasePowerUp(powerUpId) {
+        const powerUp = powerUps[powerUpId];
+        
+        if (!powerUp) {
+            showMiniNotification("❌ Power-up not found", "error");
+            return;
+        }
+        
+        // Check if player has enough XP
+        if (stats.xp < powerUp.price) {
+            showMiniNotification("❌ Not enough XP to purchase this power-up", "error");
+            return;
+        }
+        
+        // Check if power-up is on cooldown
+        const timeSinceLastUse = Date.now() - powerUp.lastUsed;
+        if (timeSinceLastUse < powerUp.cooldown) {
+            const remainingCooldown = Math.ceil((powerUp.cooldown - timeSinceLastUse) / 1000 / 60);
+            showMiniNotification(`❌ ${powerUp.name} is on cooldown for ${remainingCooldown} more minutes`, "error");
+            return;
+        }
+        
+        // Purchase the power-up
+        stats.xp -= powerUp.price;
+        powerUp.lastUsed = Date.now();
+        powerUp.active = true;
+        
+        // Apply the power-up effect
+        powerUp.effect();
+        
+        // Set timer to deactivate power-up
+        setTimeout(() => {
+            powerUp.active = false;
+            showMiniNotification(`⏰ ${powerUp.name} has ended.`, "info");
+        }, powerUp.duration);
+        
+        // Update UI
+        updateShopUI();
+        updateLevelDisplay();
+        saveStats();
+        
+        showMiniNotification(`✅ ${powerUp.name} purchased and activated!`, "success");
+    }
+
+    function updateShopUI() {
+        // Update current XP display
+        document.getElementById('currentXP').textContent = stats.xp;
+        
+        // Update each power-up button state
+        Object.keys(powerUps).forEach(powerUpId => {
+            const powerUp = powerUps[powerUpId];
+            const button = document.querySelector(`[data-powerup="${powerUpId}"]`);
+            const cooldownElement = document.getElementById(`${powerUpId}Cooldown`);
+            
+            if (button && cooldownElement) {
+                const timeSinceLastUse = Date.now() - powerUp.lastUsed;
+                const remainingCooldown = Math.ceil((powerUp.cooldown - timeSinceLastUse) / 1000 / 60);
+                
+                if (timeSinceLastUse < powerUp.cooldown) {
+                    button.disabled = true;
+                    cooldownElement.textContent = `Cooldown: ${remainingCooldown} min`;
+                } else {
+                    button.disabled = false;
+                    cooldownElement.textContent = powerUp.active ? "Active" : "Ready";
+                }
+                
+                if (stats.xp < powerUp.price) {
+                    button.disabled = true;
+                }
+            }
+        });
+    }
+
+    function showShop() {
+        updateShopUI();
+        document.getElementById('shopModal').style.display = 'flex';
+    }
+
+    function hideShop() {
+        document.getElementById('shopModal').style.display = 'none';
+    }
+
+    // ========================================
+    // PREMIUM GAME SYSTEM
+    // ========================================
+
+    const goals = {
+        processPatients: {
+            title: '👥 Patient Flow Master',
+            desc: 'Successfully process 10 patients',
+            target: 10,
+            current: 0,
+            completed: false,
+            claimed: false,
+            reward: '⚡ Efficiency Boost',
+            xp: 100,
+            icon: '👥'
+        },
+        handleEmergencies: {
+            title: '🚨 Emergency Response Hero',
+            desc: 'Handle 5 emergency cases',
+            target: 5,
+            current: 0,
+            completed: false,
+            claimed: false,
+            reward: '🏅 Priority Badge',
+            xp: 150,
+            icon: '🚨'
+        },
+        balanceQueues: {
+            title: '⚖️ Queue Optimization Expert',
+            desc: 'Balance queues when needed (requires imbalance)',
+            target: 5,
+            current: 0,
+            completed: false,
+            claimed: false,
+            reward: '🔄 Load Balancer Pro',
+            xp: 200,
+            icon: '⚖️'
+        }
+    };
+
+    let stats = {
+        totalProcessed: 0,
+        emergenciesHandled: 0,
+        balanceActions: 0,
+        efficiency: 100,
+        startTime: Date.now(),
+        level: 1,
+        xp: 0,
+        totalXP: 0,
+        streak: 0,
+        lastAction: null
+    };
+
+    function saveStats() {
+        localStorage.setItem('cureosity_stats', JSON.stringify(stats));
+        localStorage.setItem('cureosity_goals', JSON.stringify(goals));
+        localStorage.setItem('cureosity_powerups', JSON.stringify(powerUps));
+    }
+
+    function loadStats() {
+        const savedStats = localStorage.getItem('cureosity_stats');
+        const savedGoals = localStorage.getItem('cureosity_goals');
+        const savedPowerUps = localStorage.getItem('cureosity_powerups');
+
+        if (savedStats) {
+            try {
+                stats = JSON.parse(savedStats);
+            } catch (e) {
+                console.warn('Could not load stats');
+            }
+        }
+
+        if (savedGoals) {
+            try {
+                const loaded = JSON.parse(savedGoals);
+                Object.keys(goals).forEach(key => {
+                    if (loaded[key]) {
+                        Object.assign(goals[key], loaded[key]);
+                    }
+                });
+            } catch (e) {
+                console.warn('Could not load goals');
+            }
+        }
+
+        if (savedPowerUps) {
+            try {
+                const loaded = JSON.parse(savedPowerUps);
+                Object.keys(powerUps).forEach(key => {
+                    if (loaded[key]) {
+                        powerUps[key].lastUsed = loaded[key].lastUsed || 0;
+                        powerUps[key].active = loaded[key].active || false;
+                    }
+                });
+            } catch (e) {
+                console.warn('Could not load power-ups');
+            }
+        }
+    }
+
+    function updateGoalsDisplay() {
+        const goalsList = document.getElementById('goalsList');
+        if (!goalsList) return;
+
+        goalsList.innerHTML = Object.entries(goals).map(([key, goal]) => {
+            const progress = Math.min(100, (goal.current / goal.target) * 100);
+            const statusClass = goal.claimed ? 'claimed' : goal.completed ? 'completed' : 'in-progress';
+
+            return `
+            <div class="goal-card ${statusClass}" data-goal="${key}">
+                <div class="goal-header">
+                    <div class="goal-icon">${goal.icon}</div>
+                    <div class="goal-info">
+                        <div class="goal-title">${goal.title}</div>
+                        <div class="goal-desc">${goal.desc}</div>
+                    </div>
+                    ${goal.claimed ? '<div class="goal-badge claimed-badge">✅ Claimed</div>' :
+                    goal.completed ? '<div class="goal-badge ready-badge">🎁 Ready!</div>' :
+                    '<div class="goal-badge progress-badge">In Progress</div>'}
+                </div>
+                <div class="goal-progress-wrapper">
+                    <div class="goal-progress-bar">
+                        <div class="goal-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="goal-progress-text">${goal.current} / ${goal.target}</div>
+                </div>
+                <div class="goal-reward">
+                    <span class="reward-label">Reward:</span>
+                    <span class="reward-value">${goal.reward} <span class="xp-badge">+${goal.xp} XP</span></span>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        updateLevelDisplay();
+    }
+
+    function updateLevelDisplay() {
+        const xpForNextLevel = stats.level * 500;
+        const xpProgress = (stats.xp / xpForNextLevel) * 100;
+
+        const levelDisplay = document.getElementById('levelDisplay');
+        if (levelDisplay) {
+            levelDisplay.innerHTML = `
+                <div class="level-card">
+                    <div class="level-badge">
+                        <div class="level-number">${stats.level}</div>
+                        <div class="level-label">LEVEL</div>
+                    </div>
+                    <div class="level-info">
+                        <div class="level-xp-text">
+                            <span class="current-xp">${stats.xp}</span> / ${xpForNextLevel} XP
+                        </div>
+                        <div class="level-progress-bar">
+                            <div class="level-progress-fill" style="width: ${xpProgress}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function updateGoalProgress(goalType, amount = 1) {
+        if (goals[goalType] && !goals[goalType].claimed) {
+            const goal = goals[goalType];
+            const oldProgress = goal.current;
+            goal.current = Math.min(goal.current + amount, goal.target);
+
+            if (goal.current >= goal.target && !goal.completed) {
+                goal.completed = true;
+                showPremiumNotification(
+                    `🎉 Goal Completed!`,
+                    `${goal.title}`,
+                    `You've unlocked: ${goal.reward}`,
+                    'success'
+                );
+            } else if (goal.current > oldProgress && !goal.completed) {
+                const progressPercent = Math.round((goal.current / goal.target) * 100);
+                showMiniNotification(`${goal.icon} ${progressPercent}% - ${goal.current}/${goal.target}`, 'progress');
+            }
+
+            updateGoalsDisplay();
+            saveStats();
+        }
+    }
+
+    function claimRewards() {
+        let claimedAny = false;
+        let totalXP = 0;
+        let rewards = [];
+
+        Object.entries(goals).forEach(([key, goal]) => {
+            if (goal.completed && !goal.claimed) {
+                claimedAny = true;
+                goal.claimed = true;
+                totalXP += goal.xp;
+                rewards.push(goal.reward);
+            }
+        });
+
+        if (claimedAny) {
+            stats.xp += totalXP;
+            stats.totalXP += totalXP;
+
+            const xpForNextLevel = stats.level * 500;
+            if (stats.xp >= xpForNextLevel) {
+                stats.level++;
+                stats.xp -= xpForNextLevel;
+                showPremiumNotification(
+                    '🌟 LEVEL UP!',
+                    `You reached Level ${stats.level}!`,
+                    'Your clinic management skills are improving!',
+                    'levelup'
+                );
+            }
+
+            showPremiumNotification(
+                '🎁 Rewards Claimed!',
+                `+${totalXP} XP earned`,
+                rewards.join(' • '),
+                'success'
+            );
+
+            setTimeout(() => {
+                Object.values(goals).forEach(goal => {
+                    if (goal.claimed) {
+                        goal.current = 0;
+                        goal.completed = false;
+                        goal.claimed = false;
+                    }
+                });
+                updateGoalsDisplay();
+                saveStats();
+            }, 2000);
+
+        } else {
+            showMiniNotification('❌ No completed goals to claim', 'info');
+        }
+    }
+
+    function showPremiumNotification(title, subtitle, message, type = 'info') {
+        const popup = document.createElement('div');
+        popup.className = `premium-notification ${type}`;
+
+        const icons = {
+            success: '🎉',
+            levelup: '🌟',
+            info: '💡'
+        };
+
+        popup.innerHTML = `
+            <div class="notification-icon">${icons[type] || icons.info}</div>
+            <div class="notification-title">${title}</div>
+            <div class="notification-subtitle">${subtitle}</div>
+            <div class="notification-message">${message}</div>
+        `;
+
+        document.body.appendChild(popup);
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            popup.style.transform = 'translateX(400px)';
+            setTimeout(() => popup.remove(), 400);
+        }, 3500);
+    }
+
+    function showMiniNotification(message, type = 'info') {
+        const existing = document.querySelector('.mini-notification');
+        if (existing) existing.remove();
+
+        const popup = document.createElement('div');
+        popup.className = 'mini-notification';
+        popup.textContent = message;
+
+        document.body.appendChild(popup);
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.remove(), 300);
+        }, 2000);
+    }
+
+    // ========================================
+    // TUTORIAL SYSTEM
+    // ========================================
+
+    let currentTutorialStep = 0;
+    let tutorialSteps = [];
+
+    function initializeTutorial() {
+        tutorialSteps = [
+            {
+                title: "👋 Welcome to Cureosity Clinic!",
+                content: "You're managing a clinic with multiple doctors. Your goal is to efficiently handle patient queues and level up your management skills.",
+                position: "center"
+            },
+            {
+                title: "📝 Add Patients",
+                content: "Use the form to register new patients. Set priority levels - emergencies will be seen first using a priority queue algorithm!",
+                position: "left",
+                element: "#patientForm"
+            },
+            {
+                title: "⚖️ Automatic Assignment",
+                content: "The system uses load balancing to automatically assign patients to doctors with shorter queues for better efficiency.",
+                position: "left",
+                element: "#doctor"
+            },
+            {
+                title: "🎯 Complete Goals",
+                content: "Complete daily goals to earn XP and level up! Process patients, handle emergencies, and balance queues strategically.",
+                position: "left",
+                element: "#goalsList"
+            },
+            {
+                title: "🎁 Claim Your Rewards",
+                content: "When goals are completed, claim your rewards to earn XP and unlock achievements. Goals reset for continuous gameplay!",
+                position: "left",
+                element: "#btnClaimRewards"
+            },
+            {
+                title: "🛍️ Power-Up Shop",
+                content: "Use your earned XP to purchase power-ups that enhance your clinic management abilities!",
+                position: "top",
+                element: "#btnShop"
+            }
+        ];
+    }
+
+    function showTutorialStep(stepIndex) {
+        if (stepIndex >= tutorialSteps.length) {
+            localStorage.setItem('cureosity_tutorial_completed', 'true');
+            return;
+        }
+
+        const step = tutorialSteps[stepIndex];
+        showTutorialDialog(step.title, step.content, stepIndex);
+    }
+
+    function showTutorialDialog(title, content, stepIndex) {
+        const existing = document.querySelector('.dialog-overlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'dialog-overlay';
+
+        const dialog = document.createElement('div');
+        dialog.className = 'tutorial-dialog';
+        dialog.innerHTML = `
+            <h3>${title}</h3>
+            <p>${content}</p>
+            <div class="tutorial-actions">
+                <div class="tutorial-progress">Step ${stepIndex + 1}/${tutorialSteps.length}</div>
+                <div class="tutorial-buttons">
+                    ${stepIndex > 0 ? `<button id="tutorialBackBtn" class="btn ghost">Back</button>` : ''}
+                    <button id="tutorialNextBtn" class="btn primary">
+                        ${stepIndex === tutorialSteps.length - 1 ? 'Finish' : 'Next'}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        const backBtn = document.getElementById('tutorialBackBtn');
+        const nextBtn = document.getElementById('tutorialNextBtn');
+
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                overlay.remove();
+                showTutorialStep(stepIndex - 1);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                overlay.remove();
+                showTutorialStep(stepIndex + 1);
+            });
+        }
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+                localStorage.setItem('cureosity_tutorial_completed', 'true');
+            }
+        });
+    }
+
+    function showTutorial() {
+        if (!localStorage.getItem('cureosity_tutorial_completed')) {
+            setTimeout(() => showTutorialStep(0), 1000);
+        }
+    }
+
+    // ========================================
+    // CORE QUEUE MANAGEMENT
+    // ========================================
+
+    // Data Structures
+    class PriorityQueue {
+        constructor() {
+            this.heap = [];
+        }
+
+        enqueue(patient, priority) {
+            // Create a DEEP COPY of the patient to avoid reference sharing
+            const patientCopy = {
+                id: patient.id,
+                name: patient.name,
+                age: patient.age,
+                gender: patient.gender,
+                priority: patient.priority,
+                concern: patient.concern,
+                timestamp: patient.timestamp,
+                waitTime: patient.waitTime,
+                assignedDoctor: patient.assignedDoctor
+            };
+            
+            const element = { patient: patientCopy, priority };
+            this.heap.push(element);
+            this._bubbleUp();
+        }
+
+        dequeue() {
+            const min = this.heap[0];
+            const end = this.heap.pop();
+            if (this.heap.length > 0) {
+                this.heap[0] = end;
+                this._sinkDown(0);
+            }
+            return min ? min.patient : null;
+        }
+
+        _bubbleUp() {
+            let index = this.heap.length - 1;
+            const element = this.heap[index];
+
+            while (index > 0) {
+                const parentIndex = Math.floor((index - 1) / 2);
+                const parent = this.heap[parentIndex];
+
+                if (element.priority >= parent.priority) break;
+
+                this.heap[parentIndex] = element;
+                this.heap[index] = parent;
+                index = parentIndex;
+            }
+        }
+
+        _sinkDown(index) {
+            const length = this.heap.length;
+            const element = this.heap[index];
+
+            while (true) {
+                let leftChildIndex = 2 * index + 1;
+                let rightChildIndex = 2 * index + 2;
+                let leftChild, rightChild;
+                let swap = null;
+
+                if (leftChildIndex < length) {
+                    leftChild = this.heap[leftChildIndex];
+                    if (leftChild.priority < element.priority) {
+                        swap = leftChildIndex;
+                    }
+                }
+
+                if (rightChildIndex < length) {
+                    rightChild = this.heap[rightChildIndex];
+                    if ((swap === null && rightChild.priority < element.priority) ||
+                        (swap !== null && rightChild.priority < leftChild.priority)) {
+                        swap = rightChildIndex;
+                    }
+                }
+
+                if (swap === null) break;
+
+                this.heap[index] = this.heap[swap];
+                this.heap[swap] = element;
+                index = swap;
+            }
+        }
+
+        isEmpty() {
+            return this.heap.length === 0;
+        }
+
+        size() {
+            return this.heap.length;
+        }
+
+        peek() {
+            return this.heap[0] ? this.heap[0].patient : null;
+        }
+
+        // NEW: Method to get all patients in queue for debugging
+        getAllPatients() {
+            return this.heap.map(item => item.patient);
+        }
+    }
+
+    // Clinic State
+    let clinic = {
+        doctors: [],
+        patients: [],
+        nextPatientId: 1,
+        nextDoctorId: 1
+    };
+
+    // Initialize Clinic - FIXED: Using 4 default doctors
+    function initializeClinic() {
+        clinic.doctors = [
+            { id: 1, name: "Dr. Smith", specialty: "General Medicine", queue: new PriorityQueue(), nowAttending: null, efficiency: 95 },
+            { id: 2, name: "Dr. Johnson", specialty: "Pediatrics", queue: new PriorityQueue(), nowAttending: null, efficiency: 88 },
+            { id: 3, name: "Dr. Williams", specialty: "Cardiology", queue: new PriorityQueue(), nowAttending: null, efficiency: 92 },
+            { id: 4, name: "Dr. Brown", specialty: "Orthopedics", queue: new PriorityQueue(), nowAttending: null, efficiency: 90 }
+        ];
+
+        updateDoctorsDropdown();
+        renderDoctorsList();
+        updateDisplayView();
+        updateStats();
+    }
+
+    // Priority Mapping
+    function getPriorityValue(priority) {
+        const priorities = { high: 1, medium: 2, normal: 3 };
+        return priorities[priority] || 3;
+    }
+
+    // Add Patient - FIXED COMPLETE VERSION
+    function addPatient(patientData, autoAssign = false) {
+        console.log('Adding patient:', patientData, 'autoAssign:', autoAssign);
+
+        const patient = {
+            id: clinic.nextPatientId++,
+            name: patientData.name,
+            age: patientData.age,
+            gender: patientData.gender,
+            priority: patientData.priority,
+            concern: patientData.concern,
+            timestamp: Date.now(),
+            waitTime: 0,
+            assignedDoctor: patientData.doctor
+        };
+
+        clinic.patients.push(patient);
+
+        let targetDoctor;
+        if (autoAssign) {
+            targetDoctor = findOptimalDoctor();
+            patient.assignedDoctor = targetDoctor.id;
+        } else {
+            const selectedDoctorId = parseInt(patientData.doctor);
+            console.log('Selected doctor ID:', selectedDoctorId);
+            targetDoctor = clinic.doctors.find(d => d.id === selectedDoctorId);
+            
+            if (!targetDoctor) {
+                showMiniNotification('❌ Could not find the selected doctor', 'error');
+                return;
+            }
+        }
+
+        console.log('Target doctor:', targetDoctor.name);
+
+        // CRITICAL FIX: Add patient to the target doctor's queue
+        const priorityValue = getPriorityValue(patient.priority);
+        targetDoctor.queue.enqueue(patient, priorityValue);
+
+        // DEBUG: Check queue sizes after adding
+        console.log('Queue sizes after adding:');
+        clinic.doctors.forEach(d => {
+            console.log(`${d.name}: ${d.queue.size()} patients`);
+        });
+
+        if (patient.priority === 'high') {
+            updateGoalProgress('handleEmergencies');
+            showMiniNotification('🚨 Emergency patient added to priority queue!', 'emergency');
+        }
+
+        updateGoalProgress('processPatients');
+        
+        // Update UI
+        updateDoctorsDropdown();
+        renderDoctorsList();
+        updateDisplayView();
+        updateStats();
+        updateQueueVisualization();
+        saveClinicState();
+
+        showMiniNotification(`✅ ${patient.name} added to ${targetDoctor.name}'s queue`, 'success');
+    }
+
+    // Auto-assign to optimal doctor
+    function findOptimalDoctor() {
+        if (clinic.doctors.length === 0) return null;
+
+        let optimalDoctor = clinic.doctors[0];
+        let smallestQueueSize = optimalDoctor.queue.size();
+
+        // Start from the second doctor and find the one with the smallest queue
+        for (let i = 1; i < clinic.doctors.length; i++) {
+            const doctor = clinic.doctors[i];
+            const queueSize = doctor.queue.size();
+
+            if (queueSize < smallestQueueSize) {
+                optimalDoctor = doctor;
+                smallestQueueSize = queueSize;
+            }
+        }
+
+        return optimalDoctor;
+    }
+
+    // Balance Queues
+    function balanceQueues() {
+        // Check if balancing is actually needed (3+ patient difference)
+        const queueSizes = clinic.doctors.map(d => d.queue.size());
+        const maxQueue = Math.max(...queueSizes);
+        const minQueue = Math.min(...queueSizes);
+
+        if (maxQueue - minQueue < 3) {
+            showMiniNotification('⚖️ Queues are already balanced', 'info');
+            return;
+        }
+
+        let transfers = 0;
+
+        // Simple load balancing: move patients from longest to shortest queue
+        while (maxQueue - minQueue >= 2) {
+            const busiestDoctor = clinic.doctors.reduce((max, doctor) =>
+                doctor.queue.size() > max.queue.size() ? doctor : max
+            );
+
+            const leastBusyDoctor = clinic.doctors.reduce((min, doctor) =>
+                doctor.queue.size() < min.queue.size() ? doctor : min
+            );
+
+            if (busiestDoctor.queue.size() - leastBusyDoctor.queue.size() < 2) break;
+
+            // Move one patient (simplified - in reality would need to rebuild queues)
+            const patient = busiestDoctor.queue.dequeue();
+            if (patient) {
+                const priorityValue = getPriorityValue(patient.priority);
+                leastBusyDoctor.queue.enqueue(patient, priorityValue);
+                transfers++;
+            }
+        }
+
+        if (transfers > 0) {
+            updateGoalProgress('balanceQueues');
+            showMiniNotification(`🔄 Balanced ${transfers} patients across queues`, 'success');
+            renderDoctorsList();
+            updateQueueVisualization();
+            saveClinicState();
+        }
+    }
+
+    function updateDoctorsDropdown() {
+        const select = document.getElementById('doctor');
+        if (select) {
+            select.innerHTML = clinic.doctors.map(doctor => 
+                `<option value="${doctor.id}">${doctor.name} (${doctor.specialty}) - ${doctor.queue.size()} waiting</option>`
+            ).join('');
+        }
+    }
+
+    function renderDoctorsList() {
+        const container = document.getElementById('doctorsList');
+        if (!container) {
+            console.error('doctorsList container not found');
+            return;
+        }
+
+        container.innerHTML = clinic.doctors.map(doctor => {
+            const queueSize = doctor.queue.size();
+            const nowAttending = doctor.nowAttending;
+
+            return `
+            <div class="doctor-card">
+                <div class="efficiency-score">${Math.round(doctor.efficiency)}%</div>
+                <div class="doc-top">
+                    <div>
+                        <div class="doc-name">${doctor.name}</div>
+                        <div class="doc-spec">${doctor.specialty}</div>
+                    </div>
+                </div>
+
+                ${nowAttending ? `
+                    <div class="now-attending">Now with: <strong>${nowAttending.name}</strong></div>
+                    <div class="waiting">${nowAttending.concern} • ${nowAttending.priority} priority</div>
+                ` : `
+                    <div class="now-attending" style="color:var(--muted)">Available</div>
+                `}
+
+                <div class="waiting">${queueSize} patient${queueSize !== 1 ? 's' : ''} waiting</div>
+
+                <div class="doc-controls">
+                    <button class="btn-call" onclick="callNextPatient(${doctor.id})" ${queueSize === 0 ? 'disabled' : ''}>
+                        📢 Call Next
+                    </button>
+                    <button class="btn-done" onclick="completeCurrentPatient(${doctor.id})" ${!nowAttending ? 'disabled' : ''}>
+                        ✅ Done
+                    </button>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function updateDisplayView() {
+        const container = document.getElementById('displayGrid');
+        if (container) {
+            container.innerHTML = clinic.doctors.map(doctor => {
+                const nowAttending = doctor.nowAttending;
+
+                return `
+                <div class="display-card ${nowAttending ? 'updated' : ''}">
+                    <div class="display-doc">${doctor.name}</div>
+                    <div class="display-now">${nowAttending ? nowAttending.name : 'Available'}</div>
+                    <div class="display-sub">${nowAttending ? nowAttending.concern : 'Ready for next patient'}</div>
+                    ${nowAttending ? `<div style="margin-top:8px;font-size:12px;color:var(--muted)">${nowAttending.priority} priority</div>` : ''}
+                </div>
+                `;
+            }).join('');
+        }
+    }
+
+    function updateStats() {
+        const totalPatients = clinic.patients.length + clinic.doctors.filter(d => d.nowAttending).length;
+        const avgWaitTime = clinic.patients.length > 0 ?
+            Math.round(clinic.patients.reduce((sum, p) => sum + (Date.now() - p.timestamp), 0) / clinic.patients.length / 60000) : 0;
+
+        const avgEfficiency = clinic.doctors.reduce((sum, d) => sum + d.efficiency, 0) / clinic.doctors.length;
+
+        const totalPatientsEl = document.getElementById('totalPatients');
+        const avgWaitTimeEl = document.getElementById('avgWaitTime');
+        const efficiencyScoreEl = document.getElementById('efficiencyScore');
+
+        if (totalPatientsEl) totalPatientsEl.textContent = `👥 ${totalPatients} patients`;
+        if (avgWaitTimeEl) avgWaitTimeEl.textContent = `⏱️ ${avgWaitTime} min avg`;
+        if (efficiencyScoreEl) efficiencyScoreEl.textContent = `🎯 ${Math.round(avgEfficiency)}% efficient`;
+    }
+
+    function updateQueueVisualization() {
+        const container = document.getElementById('queueVisual');
+        if (!container) return;
+
+        const allPatients = [];
+
+        clinic.doctors.forEach(doctor => {
+            const queueSize = doctor.queue.size();
+            if (queueSize > 0) {
+                allPatients.push({
+                    doctor: doctor.name,
+                    count: queueSize,
+                    nextPatient: doctor.queue.peek()
+                });
+            }
+        });
+
+        if (allPatients.length === 0) {
+            container.innerHTML = '<div class="queue-node" style="opacity:0.4">All queues are empty</div>';
+            return;
+        }
+
+        container.innerHTML = allPatients.map(item => `
+            <div class="queue-node">
+                <strong>${item.doctor}</strong>
+                ${item.count} waiting
+                ${item.nextPatient ? `<div style="margin-top:4px;font-size:10px;color:var(--muted)">Next: ${item.nextPatient.name}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    // Save/Load Clinic State - FIXED VERSION
+    function saveClinicState() {
+        // Convert queues to serializable format
+        const serializableDoctors = clinic.doctors.map(doctor => ({
+            ...doctor,
+            queue: doctor.queue.heap.map(item => ({
+                patient: item.patient,
+                priority: item.priority
+            })),
+            nowAttending: doctor.nowAttending
+        }));
+
+        localStorage.setItem('cureosity_clinic', JSON.stringify({
+            doctors: serializableDoctors,
+            patients: clinic.patients,
+            nextPatientId: clinic.nextPatientId,
+            nextDoctorId: clinic.nextDoctorId
+        }));
+    }
+
+    function loadClinicState() {
+        const saved = localStorage.getItem('cureosity_clinic');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                
+                // Reconstruct doctors with proper PriorityQueue instances
+                clinic.doctors = data.doctors.map(d => {
+                    const doctor = {
+                        id: d.id,
+                        name: d.name,
+                        specialty: d.specialty,
+                        queue: new PriorityQueue(),
+                        nowAttending: d.nowAttending,
+                        efficiency: d.efficiency || 90
+                    };
+                    
+                    // Rebuild the queue from saved data
+                    if (d.queue && Array.isArray(d.queue)) {
+                        d.queue.forEach(item => {
+                            if (item && item.patient) {
+                                doctor.queue.enqueue(item.patient, item.priority);
+                            }
+                        });
+                    }
+                    
+                    return doctor;
+                });
+                
+                clinic.patients = data.patients || [];
+                clinic.nextPatientId = data.nextPatientId || 1;
+                clinic.nextDoctorId = data.nextDoctorId || 1;
+                
+                console.log('Loaded clinic state successfully');
+            } catch (e) {
+                console.warn('Could not load clinic state, initializing fresh:', e);
+                initializeClinic();
+            }
+        } else {
+            initializeClinic();
+        }
+    }
+
+    // ========================================
+    // EVENT HANDLERS & INITIALIZATION
+    // ========================================
+
+    function initializeApp() {
+        console.log('Initializing app...');
+
+        // Clear any old data with wrong doctor names first
+        clearOldData();
+
+        // Load data first
+        loadStats();
+        initializeTutorial();
+        loadClinicState();
+
+        // Then update UI
+        updateGoalsDisplay();
+        updateStats();
+        updateDoctorsDropdown();
+        renderDoctorsList();
+        updateDisplayView();
+        updateQueueVisualization();
+
+        // Show tutorial if first time
+        showTutorial();
+
+        // Set up event listeners
+        document.getElementById('patientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const selectedDoctor = formData.get('doctor');
+            console.log('Form submitted, selected doctor:', selectedDoctor);
+            
+            const patientData = {
+                name: formData.get('name'),
+                age: formData.get('age'),
+                gender: formData.get('gender'),
+                priority: formData.get('priority'),
+                concern: formData.get('concern'),
+                doctor: parseInt(selectedDoctor)
+            };
+            addPatient(patientData);
+            this.reset();
+        });
+
+        document.getElementById('btnAddAuto').addEventListener('click', function() {
+            const form = document.getElementById('patientForm');
+            const formData = new FormData(form);
+            const patientData = {
+                name: formData.get('name') || `Patient ${Date.now().toString().slice(-4)}`,
+                age: formData.get('age') || '30',
+                gender: formData.get('gender') || 'Unknown',
+                priority: formData.get('priority') || 'normal',
+                concern: formData.get('concern') || 'Routine check-up',
+                doctor: 0 // Will be auto-assigned
+            };
+            addPatient(patientData, true);
+            form.reset();
+        });
+
+        // Shop button functionality
+        document.getElementById('btnShop').addEventListener('click', showShop);
+        document.getElementById('closeShopBtn').addEventListener('click', hideShop);
+
+        // Power-up purchase buttons
+        document.querySelectorAll('.powerup-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const powerUpId = this.getAttribute('data-powerup');
+                purchasePowerUp(powerUpId);
+            });
+        });
+
+        document.getElementById('btnReset').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all queues and patient data?')) {
+                localStorage.removeItem('cureosity_clinic');
+                localStorage.removeItem('cureosity_stats');
+                localStorage.removeItem('cureosity_goals');
+                localStorage.removeItem('cureosity_powerups');
+                location.reload();
+            }
+        });
+
+        document.getElementById('btnTutorial').addEventListener('click', function() {
+            localStorage.removeItem('cureosity_tutorial_completed');
+            showTutorial();
+        });
+
+        document.getElementById('btnCallAll').addEventListener('click', function() {
+            clinic.doctors.forEach(doctor => {
+                if (doctor.queue.size() > 0 && !doctor.nowAttending) {
+                    callNextPatient(doctor.id);
+                }
+            });
+        });
+
+        document.getElementById('btnClearNow').addEventListener('click', function() {
+            clinic.doctors.forEach(doctor => {
+                if (doctor.nowAttending) {
+                    completeCurrentPatient(doctor.id);
+                }
+            });
+        });
+
+        document.getElementById('btnOptimize').addEventListener('click', balanceQueues);
+        document.getElementById('btnClaimRewards').addEventListener('click', claimRewards);
+
+        // Auto-save every 30 seconds
+        setInterval(saveClinicState, 30000);
+        setInterval(updateStats, 5000);
+        setInterval(updateShopUI, 1000); // Update shop UI every second for cooldowns
+
+        console.log('App initialized successfully');
+    }
+
+    function clearOldData() {
+        // Clear any old clinic data that might have the wrong doctor names
+        const saved = localStorage.getItem('cureosity_clinic');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                // Check if the saved data has the old doctor names
+                const oldDoctors = ['Dr. Idol', 'Dr. Fontanoza', 'Dr. Go', 'Dr. Refuerzo', 'Dr. Adams'];
+                const hasOldDoctors = data.doctors && data.doctors.some(d => oldDoctors.includes(d.name));
+
+                if (hasOldDoctors) {
+                    localStorage.removeItem('cureosity_clinic');
+                    console.log('Cleared old clinic data with incorrect doctor names');
+                }
+            } catch (e) {
+                // If there's any error parsing, clear the data
+                localStorage.removeItem('cureosity_clinic');
+            }
+        }
+    }
+
+    // Start the application when DOM is loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        initializeApp();
+    }
+</script>
+</body>
+</html>
